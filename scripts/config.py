@@ -1,5 +1,3 @@
-import os
-
 CONVERSION_DOMAIN = "https://teigarage.tei-c.org/"
 TMP_DIR = "./tmp"
 SOURCE_DOC_GIDS = ["1nUkS-9gDmD7chp8OMplUDQYHBUYnxieP"]
