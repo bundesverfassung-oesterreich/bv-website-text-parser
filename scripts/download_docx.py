@@ -4,40 +4,65 @@ import os
 import gdown
 from acdh_tei_pyutils.tei import TeiReader
 from config import (
+    SOURCE_DOC_GIDS,
     CONVERSION_DOMAIN,
     TMP_DIR,
-    SOURCE_DOCX,
-    SOURCE_DOCX_URL,
-    SOURCE_XML
+    SOURCE_DOCX_BASE_URL
 )
 
-shutil.rmtree(TMP_DIR, ignore_errors=True)
-os.makedirs(TMP_DIR, exist_ok=True)
-
-print(f"start download from {SOURCE_DOCX_URL}")
-gdown.download(SOURCE_DOCX_URL, SOURCE_DOCX)
-print(f"saved {SOURCE_DOCX}")
+def setup_dirs():
+    shutil.rmtree(TMP_DIR, ignore_errors=True)
+    os.makedirs(TMP_DIR, exist_ok=True)
 
 
-print(f"posting {SOURCE_DOCX} to {CONVERSION_DOMAIN}")
-headers = {
-    "accept": "application/octet-stream",
-}
-params = {
-    "properties": '<conversions><conversion index="0"><property id="oxgarage.getImages">false</property><property id="oxgarage.getOnlineImages">false</property><property id="oxgarage.lang">en</property><property id="oxgarage.textOnly">true</property><property id="pl.psnc.dl.ege.tei.profileNames">default</property></conversion></conversions>', # noqa
-}
-files = {"fileToConvert": open(SOURCE_DOCX, "rb")}
-response = requests.post(
-    f"{CONVERSION_DOMAIN}ege-webservice/Conversions/docx%3Aapplication%3Avnd.openxmlformats-officedocument.wordprocessingml.document/TEI%3Atext%3Axml", # noqa
-    params=params,
-    headers=headers,
-    files=files,
-)
-data = response.content.decode("utf-8")
-data = data.replace("heading=h.", "heading_h_")
-data = data.replace('xml:id="', 'xml:id="xmlid__')
-print(f"saving result as {SOURCE_XML}")
-with open(SOURCE_XML, "w") as f:
-    f.write(data)
+def download_all_docxfiles():
+    # download all specified docx-files from google
+    docpaths = []
+    for gdoc_source_id in SOURCE_DOC_GIDS:
+        gdoc_doc_url = SOURCE_DOCX_BASE_URL+gdoc_source_id
+        local_save_path = f"{TMP_DIR}/{gdoc_source_id}.docx"
+        print(f"start download from {gdoc_doc_url}")
+        gdown.download(gdoc_doc_url, local_save_path)
+        if os.path.isfile(local_save_path):
+            print(f"saved {local_save_path}")
+            docpaths.append(local_save_path)
+    return docpaths
 
-doc = TeiReader(data)
+
+def request_xml_doc(docx_path):
+    print(f"posting {docx_path} to {CONVERSION_DOMAIN}")
+    headers = {
+        "accept": "application/octet-stream",
+    }
+    params = {
+        "properties": '<conversions><conversion index="0"><property id="oxgarage.getImages">false</property><property id="oxgarage.getOnlineImages">false</property><property id="oxgarage.lang">en</property><property id="oxgarage.textOnly">true</property><property id="pl.psnc.dl.ege.tei.profileNames">default</property></conversion></conversions>', # noqa
+    }
+    files = {"fileToConvert": open(docx_path, "rb")}
+    response = requests.post(
+        f"{CONVERSION_DOMAIN}ege-webservice/Conversions/docx%3Aapplication%3Avnd.openxmlformats-officedocument.wordprocessingml.document/TEI%3Atext%3Axml", # noqa
+        params=params,
+        headers=headers,
+        files=files,
+    )
+    data = response.content.decode("utf-8")
+    data = data.replace("heading=h.", "heading_h_")
+    data = data.replace('xml:id="', 'xml:id="xmlid__')
+    resulting_xml_path = docx_path.replace('.docx', '.xml')
+    print(f"saving result as {resulting_xml_path}")
+    with open(resulting_xml_path, "w") as f:
+        f.write(data)
+    return TeiReader(data)
+
+
+def convert_local_docx(docx_paths):
+    xml_docs = []
+    for docx_path in docx_paths:
+        doc = request_xml_doc(docx_path)
+        xml_docs.append(doc)
+    return xml_docs
+
+
+if __name__ == "__main__":
+    setup_dirs()
+    docxpaths = download_all_docxfiles()
+    xmlfiles = convert_local_docx(docx_paths=docxpaths)
