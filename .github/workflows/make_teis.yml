@@ -16,12 +16,9 @@ jobs:
       - name: Install Python Packages
         run: |
           pip install -r requirements.txt
-      - name: docx to tei
+      - name: docx to porcessed tei
         run: |
-          python scripts/download_docx.py
-      # - name: split and enrich files
-      #   run: |
-      #     python scripts/split.py
+          python scripts/create_and_process_xmls.py
       - name: Commit data
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
