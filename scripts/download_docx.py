@@ -51,18 +51,35 @@ def request_xml_doc(docx_path):
     print(f"saving result as {resulting_xml_path}")
     with open(resulting_xml_path, "w") as f:
         f.write(data)
-    return TeiReader(data)
+    xml_doc = TeiReader(data)
+    # setting file attrib to path
+    xml_doc.file = resulting_xml_path
+    return xml_doc
 
 
 def convert_local_docx(docx_paths):
     xml_docs = []
     for docx_path in docx_paths:
-        doc = request_xml_doc(docx_path)
-        xml_docs.append(doc)
+        xml_doc = request_xml_doc(docx_path)
+        xml_docs.append(xml_doc)
+    return xml_docs
+
+
+def create_xml_files():
+    """
+    downloads docx files from 
+    google-docs, converts them 
+    to xml and stores them in tmp.
+    Returns list of tei-reader-docs
+    created in this process.
+    """
+    setup_dirs()
+    docx_paths = download_all_docxfiles()
+    xml_docs = convert_local_docx(docx_paths)
     return xml_docs
 
 
 if __name__ == "__main__":
     setup_dirs()
-    docxpaths = download_all_docxfiles()
-    xmlfiles = convert_local_docx(docx_paths=docxpaths)
+    docx_paths = download_all_docxfiles()
+    xml_docs = convert_local_docx(docx_paths)
