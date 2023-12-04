@@ -2,8 +2,8 @@
 name: Make TEIs
 
 on:
-  # schedule:
-  # - cron: "50 23 * * *"
+  schedule:
+    - cron: "50 23 * * *"
   workflow_dispatch:
 
 jobs:
