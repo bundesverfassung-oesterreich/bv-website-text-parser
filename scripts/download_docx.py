@@ -35,11 +35,13 @@ def request_xml_doc(docx_path):
         "accept": "application/octet-stream",
     }
     params = {
-        "properties": '<conversions><conversion index="0"><property id="oxgarage.getImages">false</property><property id="oxgarage.getOnlineImages">false</property><property id="oxgarage.lang">en</property><property id="oxgarage.textOnly">true</property><property id="pl.psnc.dl.ege.tei.profileNames">default</property></conversion></conversions>', # noqa
+        #"properties": '<conversions><conversion index="0"><property id="oxgarage.getImages">false</property><property id="oxgarage.getOnlineImages">false</property><property id="oxgarage.lang">en</property><property id="oxgarage.textOnly">true</property><property id="pl.psnc.dl.ege.tei.profileNames">default</property></conversion></conversions>', # noqa
+        "properties": '<conversions><conversion index="0"><property id="oxgarage.getImages">false</property><property id="oxgarage.getOnlineImages">false</property><property id="oxgarage.lang">de</property><property id="oxgarage.textOnly">true</property><property id="pl.psnc.dl.ege.tei.profileNames">default</property></conversion><conversion index="1"></conversion></conversions>'
     }
     files = {"fileToConvert": open(docx_path, "rb")}
     response = requests.post(
-        f"{CONVERSION_DOMAIN}ege-webservice/Conversions/docx%3Aapplication%3Avnd.openxmlformats-officedocument.wordprocessingml.document/TEI%3Atext%3Axml", # noqa
+        #f"{CONVERSION_DOMAIN}ege-webservice/Conversions/docx%3Aapplication%3Avnd.openxmlformats-officedocument.wordprocessingml.document/TEI%3Atext%3Axml", # noqa
+        f"{CONVERSION_DOMAIN}ege-webservice/Conversions/docx%3Aapplication%3Avnd.openxmlformats-officedocument.wordprocessingml.document/TEI%3Atext%3Axml/Simple%3Atext%3Axml/",
         params=params,
         headers=headers,
         files=files,
