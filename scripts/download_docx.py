@@ -21,7 +21,7 @@ def download_all_docxfiles():
     for gdoc_source_id, docname in SOURCE_DOC_GIDS.items():
         gdoc_doc_url = f"{SOURCE_DOCX_BASE_URL}{gdoc_source_id}"
         local_save_path = f"{TMP_DIR}/{docname}.docx"
-        print(f"start download from {gdoc_doc_url}")
+        print(f"start download from {gdoc_doc_url} to {local_save_path}")
         gdown.download(gdoc_doc_url, local_save_path)
         if os.path.isfile(local_save_path):
             print(f"saved {local_save_path}")
