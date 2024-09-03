@@ -1,5 +1,6 @@
 # bv-commentary-parser
-Creates tei-files from docx-files fetched from google-docs.
+Creates tei-files from generic docx-files fetched from google-docs.
+This is done to provide the basic introduction texts on the website.
 Based on [grocerist](https://github.com/grocerist/grocerist-tei).
 
 ## usage
