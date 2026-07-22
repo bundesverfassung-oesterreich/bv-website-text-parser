@@ -1,0 +1,42 @@
+.DS_Store
+
+release
+dist
+customXml
+TAGS
+Test/LOG
+word
+\[Content_Types\].xml 
+docProps
+Test/test-tree.html
+names.xml
+Test/test37.xml
+epub-print.css
+msdescription.css
+odd.css
+tei-print.css
+tei.css
+tei_msdescription.css
+teislides.css
+
+Test/d3.v3.min.js
+lib/fop-*
+
+*.processedodd
+
+licensekey.txt
+
+# various files and directories that 
+# get temporarily created during 
+# `make test`
+Test/DIFFALL.bash
+Test/actual-results
+*.tmpodd
+Test/Pictures
+Test/media
+Test/charts
+Test/embeddings
+Test/xml.tmp
+Test/test.docx
+Test/test6.docx
+Test/testnotes1.docx

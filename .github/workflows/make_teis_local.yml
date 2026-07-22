@@ -1,0 +1,42 @@
+name: Make TEIs Local
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-local-tei:
+    name: make teis local
+    runs-on: ubuntu-latest
+    steps:
+      - name: Perform Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install Python packages
+        run: |
+          uv venv --python 3.12
+          uv pip install --python .venv/bin/python -r requirements.txt
+
+      - name: Download source DOCX files
+        run: |
+          uv run --python .venv/bin/python scripts/download_source_docx.py
+
+      - name: Base DOCX to TEI via Stylesheets (Ant/XSLT)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ant
+          bash scripts/convert_docx_to_base_tei.sh
+
+      - name: Local Python post-processing (no download)
+        run: |
+          uv run --python .venv/bin/python scripts/postprocess_local_xmls.py
+
+      - name: Commit data
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: TEI local conversion updates

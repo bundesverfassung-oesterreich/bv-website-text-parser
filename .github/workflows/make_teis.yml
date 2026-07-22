@@ -4,7 +4,7 @@ name: Make TEIs
 on:
   #schedule:
   #  - cron: "50 23 * * *"
-  workflow_dispatch:
+  # workflow_dispatch:
 
 jobs:
   download:
@@ -24,6 +24,28 @@ jobs:
         run: |
           uv venv --python 3.12
           uv pip install --python .venv/bin/python -r requirements.txt
+
+      - name: Base DOCX to TEI via Stylesheets (Ant/XSLT)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ant
+
+          STYLESHEETS_DIR="third_party/tei-stylesheets"
+          test -d "$STYLESHEETS_DIR"
+
+          chmod +x "$STYLESHEETS_DIR/bin/transformtei" "$STYLESHEETS_DIR/bin/docxtotei"
+          mkdir -p tmp/base-tei
+
+          INPUT_DOCX="$(find . -maxdepth 2 -type f -name '*.docx' | head -n 1 || true)"
+          if [ -n "$INPUT_DOCX" ]; then
+            OUTPUT_TEI="tmp/base-tei/$(basename "${INPUT_DOCX%.docx}").xml"
+            "$STYLESHEETS_DIR/bin/docxtotei" "$INPUT_DOCX" "$OUTPUT_TEI"
+          else
+            OUTPUT_TEI="tmp/base-tei/stylesheets-smoke.xml"
+            "$STYLESHEETS_DIR/bin/docxtotei" "$STYLESHEETS_DIR/Test2/inputFiles/docxGeneral.docx" "$OUTPUT_TEI"
+          fi
+
+          test -s "$OUTPUT_TEI"
 
       - name: Docx to processed TEI
         run: |
