@@ -11,15 +11,24 @@ jobs:
     name: make teis
     runs-on: ubuntu-latest
     steps:
-      - name: Perfom Checkout
-        uses: actions/checkout@v3
-      - name: Install Python Packages
+      - name: Perform Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install Python packages
         run: |
-          python -m pip config set global.break-system-packages true
-          pip install -r requirements.txt
-      - name: docx to porcessed tei
+          uv venv --python 3.12
+          uv pip install --python .venv/bin/python -r requirements.txt
+
+      - name: Docx to processed TEI
         run: |
-          python scripts/create_and_process_xmls.py
+          uv run --python .venv/bin/python scripts/create_and_process_xmls.py
+
       - name: Commit data
         uses: stefanzweifel/git-auto-commit-action@v7
         with:
