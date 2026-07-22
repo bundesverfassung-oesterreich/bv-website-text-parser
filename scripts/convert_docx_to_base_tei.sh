@@ -4,6 +4,8 @@ set -euo pipefail
 STYLESHEETS_DIR="third_party/tei-stylesheets"
 BASE_TEI_DIR="tmp/base-tei"
 DOCX_DIR="tmp"
+SAXON_JAR="$STYLESHEETS_DIR/lib/saxon10he.jar"
+TRANG_JAR="$STYLESHEETS_DIR/lib/trang.jar"
 
 if [[ ! -d "$STYLESHEETS_DIR" ]]; then
   echo "Missing stylesheets directory: $STYLESHEETS_DIR" >&2
@@ -12,6 +14,18 @@ fi
 
 if ! command -v ant >/dev/null 2>&1; then
   echo "Missing ant. Install Apache Ant before running this script." >&2
+  exit 1
+fi
+
+if [[ ! -s "$SAXON_JAR" ]]; then
+  echo "Missing required vendored jar: $SAXON_JAR" >&2
+  echo "Commit this file to the repository (no runtime download fallback)." >&2
+  exit 1
+fi
+
+if [[ ! -s "$TRANG_JAR" ]]; then
+  echo "Missing required vendored jar: $TRANG_JAR" >&2
+  echo "Commit this file to the repository (no runtime download fallback)." >&2
   exit 1
 fi
 

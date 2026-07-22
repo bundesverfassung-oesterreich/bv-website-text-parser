@@ -27,6 +27,13 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# Allow vendored TEI Stylesheets runtime jars required by local conversion.
+!third_party/
+!third_party/tei-stylesheets/
+!third_party/tei-stylesheets/lib/
+!third_party/tei-stylesheets/lib/saxon10he.jar
+!third_party/tei-stylesheets/lib/trang.jar
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
